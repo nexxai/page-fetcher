@@ -32,14 +32,11 @@ request(url, (error, response, body) => {
 
   // File already exists so keep adding '1's to the end of the filename until it's unique
   if (fs.existsSync(localPath)) {
-    rlInt.setPrompt('File exists.  Do you want to overwrite y/[N]? ');
-    rlInt.prompt();
-    rlInt.on('line', (data) => {
-      if (! data.toLowerCase() === 'y') {
-        throw new Error('Not overwriting');
+    rlInt.question('File exists.  Do you want to overwrite y/[N]? ', (input) => {
+      if (input.toLowerCase() === 'y') {
+        writeFile(localPath, body)
       } else {
-        writeFile(localPath, body);
-        rlInt.close();
+        throw new Error('Not overwriting');
       }
     });
   } else {
